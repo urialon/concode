@@ -51,19 +51,23 @@ def main():
   model.eval()
 
   predictions = []
+  count = 0
   for idx, batch in enumerate(test.batches): # For each batch
     try:
         hyps = model.predict(batch, opt, None)
         hyps = hyps[:opt.beam_size]
         predictions.extend(hyps)
+        count += len(hyps)
         #print('predicted successfully')
     except Exception as ex:
         dummy_pred = Prediction(' '.join(batch['raw_src'][0]), ' '.join(batch['raw_code'][0]), 'Failed', 'Failed', 0)
         print('Skipping:', ' '.join(batch['raw_src'][0]), ' '.join(batch['raw_code'][0]))
         predictions.extend([dummy_pred] * opt.beam_size)
+        count += opt.beam_size
 
-    for idx, prediction in enumerate(predictions):
-        prediction.output(opt.output, idx)
+  for idx, prediction in enumerate(predictions):
+    prediction.output(opt.output, idx)
+  print('Count: ', count)
 
 if __name__ == "__main__":
   main()

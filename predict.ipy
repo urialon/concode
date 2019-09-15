@@ -46,11 +46,11 @@ for i in range(opt.start, opt.end + 1):
   # Prod is just a dummy here
   !python translate.py -beam_size {opt.beam} -gpu 0 -model {fname[0]} -src {opt.test_file} -output {opt.models_dir}/preds/{f}.nl.prediction -max_sent_length {opt.tgt_len} -replace_unk -batch_size 1 -trunc -1 {opt.additional}
 
-  bleu = !perl tools/multi-bleu.perl -lc /tmp/test.code < {opt.models_dir}/preds/{f}.nl.prediction
+  bleu = !perl tools/multi-bleu.perl -lc tmp/test.code < {opt.models_dir}/preds/{f}.nl.prediction
   print(bleu)
   bleu_score = float(bleu[0].split(',')[0])
 
-  exact = !python tools/exact.py /tmp/test.code < {opt.models_dir}/preds/{f}.nl.prediction
+  exact = !python tools/exact.py tmp/test.code < {opt.models_dir}/preds/{f}.nl.prediction
   print(exact)
   exact_score = float(exact[0])
 

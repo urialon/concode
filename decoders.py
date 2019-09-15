@@ -48,19 +48,19 @@ class Prediction():
 
   def output(self, prefix, idx):
     out_file = open(prefix, 'a')
-    debug_file = open(prefix + '.html', 'a')
+    #debug_file = open(prefix + '.html', 'a')
     scores_file = open(prefix + '.scores.txt', 'a')
 
     out_file.write(' '.join(self.prediction) + '\n')
 
-    debug_file.write('<b>Id:</b>' + str(idx) + '<br>')
-    debug_file.write('<b>Language:</b>' + '<br>')
-    debug_file.write(' '.join(self.goldNl) + '<br>')
-    debug_file.write('<b>Code:</b>' + '<br>')
-    debug_file.write(' '.join(self.goldCode) + '<br>')
+    #debug_file.write('<b>Id:</b>' + str(idx) + '<br>')
+    #debug_file.write('<b>Language:</b>' + '<br>')
+    #debug_file.write(' '.join(self.goldNl) + '<br>')
+    #debug_file.write('<b>Code:</b>' + '<br>')
+    #debug_file.write(' '.join(self.goldCode) + '<br>')
     scores_file.write(str(np.exp(self.score)) + '\n')
 
     scores_file.close()
 
     out_file.close()
-    debug_file.close()
+    #debug_file.close()
