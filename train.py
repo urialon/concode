@@ -124,14 +124,15 @@ def main():
     vocabs['mask'] = vocabs['mask'].cuda()
   else:
     vocabs = torch.load(opt.data + '.vocab.pt')
-
+  print('Loaded vocabs')
   print(opt)
   model = S2SModel(opt, vocabs)
-
+  print('Created model')
   if opt.start_epoch:
     model.load_state_dict(checkpoint['model'])
 
   trainer  = Trainer(model)
+  print('Created Trainer')
   trainer.run_train_batched(train, valid, vocabs)
 
 if __name__ == "__main__":

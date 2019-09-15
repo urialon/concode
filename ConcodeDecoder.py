@@ -180,19 +180,23 @@ class ConcodeDecoder(nn.Module):
       goldNl += batch['concode_method'][0] # because batch = 1
 
     goldCode = self.vocabs['code'].addStartOrEnd(batch['raw_code'][0])
-    predSent, copied_tokens, replaced_tokens = self.buildTargetTokens(
-      hyp,
-      self.vocabs,
-      goldNl,
-      att,
-      batch['concode_vocab'][0],
-      replace_unk
-    )
-    predSent = ConcodeDecoder.rulesToCode(predSent)
-    pred_score_total += score
-    pred_words_total += len(predSent)
+    predictions = []
+    for score, times, k in beam.finished:
+        hyp, att = beam.getHyp(times, k)
+        predSent, copied_tokens, replaced_tokens = self.buildTargetTokens(
+          hyp,
+          self.vocabs,
+          goldNl,
+          att,
+          batch['concode_vocab'][0],
+          replace_unk
+        )
+        predSent = ConcodeDecoder.rulesToCode(predSent)
+        pred_score_total += score
+        pred_words_total += len(predSent)
 
-    return Prediction(goldNl, goldCode, predSent, att)
+        predictions.append(Prediction(goldNl, goldCode, predSent, att, score))
+    return predictions
 
   @staticmethod
   def rulesToCode(rules):

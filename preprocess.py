@@ -126,7 +126,9 @@ class Vocab():
         ret = [self.to_num(list(word), char=char - 1) for word in words]
       else:
         try:
-          ret = ([self.stoi['<s>']] if self.start and start else []) + [self.stoi[w] if w in self.stoi else self.stoi['<unk>'] for w in words] + ([self.stoi["</s>"]] if self.stop and stop else [])
+            ret = ([self.stoi['<s>']] if self.start and start else []) \
+                + [self.stoi[w] if w in self.stoi else (self.stoi['<unk>'] if '<unk>' in self.stoi else None) for w in words if w in self.stoi or '<unk>' in self.stoi] \
+                + ([self.stoi["</s>"]] if self.stop and stop else [])        
         except:
           import ipdb
           ipdb.set_trace()

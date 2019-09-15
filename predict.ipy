@@ -31,7 +31,7 @@ except:
 # We need a text file with the outputs to compute BLEU.
 # so extract it out of the json file
 test_dataset = json.loads(open(opt.test_file, 'r').read())
-test_dataset_targets = open('/tmp/test.code', 'w')
+test_dataset_targets = open('tmp/test.code', 'w')
 for example in test_dataset:
   test_dataset_targets.write(' '.join(example['code']).replace('concodeclass_', '').replace('concodefunc_', '') + '\n')
 test_dataset_targets.close()
@@ -44,7 +44,7 @@ for i in range(opt.start, opt.end + 1):
   !rm {opt.models_dir}/preds/{f}.nl.prediction*
 
   # Prod is just a dummy here
-  !python translate.py -beam_size {opt.beam} -gpu 0 -model {fname[0]} -src {opt.test_file} -output {opt.models_dir}/preds/{f}.nl.prediction -max_sent_length {opt.tgt_len} -replace_unk -batch_size 1 -trunc 2000 {opt.additional}
+  !python translate.py -beam_size {opt.beam} -gpu 0 -model {fname[0]} -src {opt.test_file} -output {opt.models_dir}/preds/{f}.nl.prediction -max_sent_length {opt.tgt_len} -replace_unk -batch_size 1 -trunc -1 {opt.additional}
 
   bleu = !perl tools/multi-bleu.perl -lc /tmp/test.code < {opt.models_dir}/preds/{f}.nl.prediction
   print(bleu)

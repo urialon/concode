@@ -1,4 +1,5 @@
 from torch.autograd import Variable
+import numpy as np
 
 class DecoderState():
     """ Input feed is ignored for this work"""
@@ -38,15 +39,17 @@ class DecoderState():
           self.input_feed.data.index_select(0, positions))
 
 class Prediction():
-  def __init__(self, goldNl, goldCode, prediction, attn):
+  def __init__(self, goldNl, goldCode, prediction, attn, score):
     self.goldNl = goldNl
     self.goldCode = goldCode
     self.prediction = prediction
     self.attn = attn
+    self.score = score
 
   def output(self, prefix, idx):
     out_file = open(prefix, 'a')
     debug_file = open(prefix + '.html', 'a')
+    scores_file = open(prefix + '.scores.txt', 'a')
 
     out_file.write(' '.join(self.prediction) + '\n')
 
@@ -55,6 +58,9 @@ class Prediction():
     debug_file.write(' '.join(self.goldNl) + '<br>')
     debug_file.write('<b>Code:</b>' + '<br>')
     debug_file.write(' '.join(self.goldCode) + '<br>')
+    scores_file.write(str(np.exp(self.score)) + '\n')
+
+    scores_file.close()
 
     out_file.close()
     debug_file.close()

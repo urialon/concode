@@ -97,18 +97,22 @@ class RegularDecoder(nn.Module):
         decState.beam_update(beam.getCurrentOrigin(), beam_size)
 
       score, times, k = beam.getFinal() # times is the length of the prediction
-      hyp, att = beam.getHyp(times, k)
+      #hyp, att = beam.getHyp(times, k)
       goldNl = self.vocabs['seq2seq'].addStartOrEnd(batch['raw_seq2seq'][0])
       goldCode = self.vocabs['code'].addStartOrEnd(batch['raw_code'][0])
-      predSent = self.buildTargetTokens(
-        hyp,
-        self.vocabs,
-        goldNl,
-        att,
-        batch['seq2seq_vocab'][0],
-        replace_unk
-      )
-      return Prediction(goldNl, goldCode, predSent, att)
+      predictions = []
+      for score, times, k in beam.finished:
+          hyp, att = beam.getHyp(times, k)
+          predSent = self.buildTargetTokens(
+            hyp,
+            self.vocabs,
+            goldNl,
+            att,
+            batch['seq2seq_vocab'][0],
+            replace_unk
+          )
+          predictions.append(Prediction(goldNl, goldCode, predSent, att, score))
+      return predictions
 
   def buildTargetTokens(self, pred, vocabs, src, attn, copy_vocab, replace_unk):
     vocab = vocabs['code']
