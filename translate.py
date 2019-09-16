@@ -65,9 +65,11 @@ def main():
         predictions.extend([dummy_pred] * opt.beam_size)
         count += opt.beam_size
 
-  for idx, prediction in enumerate(predictions):
-    prediction.output(opt.output, idx)
   print('Count: ', count)
+  with open(opt.output, 'w') as outfile:
+      with open(opt.output + '.scores.txt', 'w') as scores_file:
+          for idx, prediction in enumerate(predictions):
+            prediction.output(outfile=outfile, scorefile=scores_file)
 
 if __name__ == "__main__":
   main()
